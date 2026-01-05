@@ -1,0 +1,31 @@
+<section id="content-grup" class="content">
+    <h2>Master Grup</h2>
+
+    <form id="grup-form" onsubmit="saveGrup(event)">
+        <label>Kode</label>
+        <input type="text" id="kode" required>
+
+        <label>Nama Grup</label>
+        <input type="text" id="nama" required>
+
+        <button type="submit">Simpan</button>
+    </form>
+
+    <h3>Data Grup</h3>
+    <table border="1" width="100%">
+        <thead>
+            <tr>
+                <th>Kode</th>
+                <th>Nama Grup</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-grup"></tbody>
+    </table>
+</section>
+
+<script src="js/grup.js"></script>
+<script>
+    // Auto load saat halaman dibuka
+    loadGrup();
+</script>

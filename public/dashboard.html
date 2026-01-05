@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bro Snack - Dashboard Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+    --primary: #4361ee;
+    --primary-hover: #3f37c9;
+    --sidebar-bg: #1e293b;
+    --content-bg: #f8fafc;
+    --text-main: #334155;
+    --text-light: #94a3b8;
+    --white: #ffffff;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif; }
+
+body { background: var(--content-bg); display: flex; color: var(--text-main); min-height: 100vh; }
+
+/* --- SIDEBAR RESPONSIVE --- */
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    color: white;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    display: flex;           /* AKTIFKAN FLEX */
+    flex-direction: column;  /* ARAH VERTIKAL */
+    justify-content: space-between; /* DORONG FOOTER KE BAWAH */
+    transform: none !important;
+    border-right: 1px solid rgba(0,0,0,0.1); /* Garis tipis pembatas */
+}
+
+/* --- MOBILE HEADER --- */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    background: var(--sidebar-bg);
+    color: white;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1100;
+    box-shadow: var(--shadow);
+}
+
+.menu-toggle {
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    font-weight: 800;
+    padding: 24px 24px 10px 24px; 
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #60a5fa;
+}
+
+.user-info-box { 
+    padding: 0 24px 20px 24px; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    margin-bottom: 10px;
+}
+
+.user-info-box p { 
+    color: var(--text-light); 
+    font-size: 11px; 
+    margin-bottom: 2px; 
+}
+
+.user-info-box .username { 
+    color: var(--white); 
+    font-size: 14px; 
+    font-weight: 600; 
+}
+
+/* BAGIAN MENU UTAMA */
+.sidebar-menu {
+    flex: 1;              /* MENGAMBIL SISA RUANG */
+    overflow-y: auto;     /* BISA SCROLL JIKA MENU BANYAK */
+    padding: 10px 24px;   /* SESUAIKAN PADDING AGAR RAPI */
+}
+
+.menu-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.menu button {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu button:hover {
+    background: rgba(255,255,255,0.05);
+    color: white;
+}
+
+/* Pastikan ini ada di CSS kamu */
+.menu button.active {
+    background: var(--primary) !important; /* Warna biru utama */
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+}
+
+/* BAGIAN FOOTER / LOGOUT */
+.sidebar-footer {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: var(--sidebar-bg);
+    margin-top: auto; /* MAGNET KE BAWAH */
+}
+
+#logoutBtn {
+    width: 100%;
+    padding: 12px;
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #f87171 !important;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+
+#logoutBtn:hover {
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+.version-text { 
+    text-align: center; 
+    font-size: 10px; 
+    color: var(--text-light); 
+    margin-top: 12px; 
+    opacity: 0.8; 
+}
+
+/* CONTENT AREA */
+.content {
+    margin-left: 260px; /* Harus sama dengan lebar sidebar agar rapat */
+    padding: 20px 30px; /* Kecilkan dari 40px ke 20px (atas-bawah) dan 30px (kiri-kanan) */
+    width: calc(100% - 260px); /* Pastikan lebar konten adalah sisa dari sidebar */
+    transition: all 0.3s ease;
+}
+
+/* --- AREA HEADER DALAM KONTEN --- */
+.content-header { 
+    margin-bottom: 20px; /* Dikurangi dari 30px agar konten naik sedikit ke atas */
+    padding-top: 5px;    /* Memberikan sedikit ruang di atas judul agar tidak nempel banget ke atas */
+}
+
+.content-header h2 { 
+    font-size: 22px;     /* Kecilkan sedikit dari 24px agar lebih proporsional */
+    font-weight: 700; 
+    color: #0f172a; 
+    letter-spacing: -0.5px; /* Membuat tulisan lebih rapat dan modern */
+}
+
+.content-header p { 
+    color: var(--text-light); 
+    margin-top: 2px;     /* Dikurangi dari 4px agar sub-judul lebih nempel ke judul */
+    font-size: 13px;     /* Ukuran teks keterangan diperjelas */
+}
+/* CARD DESIGN */
+.card {
+    background: var(--white);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+}
+
+/* FORM MODERN */
+.form-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-size: 13px; font-weight: 600; color: #475569; }
+
+input, select {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+    transition: border 0.2s;
+    outline: none;
+}
+
+input:focus, select:focus { border-color: var(--primary); }
+
+.btn-main {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    grid-column: 1 / -1;
+}
+.btn-main:hover { background: var(--primary-hover); }
+
+/* TABLE MODERN */
+.table-container { 
+    overflow-x: auto !important;
+    width: 100%;
+    margin-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+table { 
+    width: 100%; 
+    min-width: 600px;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+thead th {
+    background: #f8fafc;
+    padding: 14px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+tbody td { padding: 14px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; }
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-stok-habis { background: #fee2e2; color: #ef4444; }
+
+.actions { display: flex; gap: 8px; }
+.btn-icon {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+.btn-edit { background: #fef3c7; color: #d97706; }
+.btn-hapus { background: #fee2e2; color: #ef4444; }
+.btn-detail { background: #e0e7ff; color: #4361ee; }
+
+.profit-card {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Tambahkan ini di paling bawah file CSS */
+.admin-only[style*="display: none"] {
+    display: none !important;
+}
+
+.sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+       @media (max-width: 768px) {
+    .content {
+        height: calc(100vh - 60px); /* Tinggi layar dikurangi header */
+        overflow-y: auto; /* Hanya konten yang bisa di-scroll */
+        position: fixed;
+        top: 60px;
+        width: 100%;
+    }
+
+
+    .mobile-header { 
+        display: flex !important; 
+        width: 100%;
+        z-index: 1300 !important;
+    }
+
+    .sidebar { 
+        left: -260px !important;
+        width: 260px !important;
+        z-index: 1400 !important;
+        transition: 0.3s ease;
+    }
+
+    .sidebar.active { 
+        left: 0 !important; 
+    }
+
+    /* PERBAIKAN UTAMA: Content harus lebar penuh */
+    .content { 
+        margin-left: 0 !important; 
+        width: 100% !important;
+        max-width: 100vw !important; /* Paksa selebar layar HP */
+        padding: 80px 10px 20px 10px !important; /* Kecilkan padding samping agar konten luas */
+        box-sizing: border-box !important;
+        display: block !important;
+    }
+
+    /* Card di mobile jangan terlalu banyak padding agar tidak terlihat kecil */
+    .card {
+        padding: 15px !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Form agar memenuhi layar */
+    .form-box {
+        grid-template-columns: 1fr !important; /* Satu kolom penuh di HP */
+    }
+
+    /* Tabel harus bisa scroll mandiri, tidak merusak lebar halaman */
+    .table-container {
+        width: 100% !important;
+        overflow-x: auto !important;
+        display: block;
+    }
+}
+    </style>
+</head>
+<body onload="goHome()">
+
+<div class="mobile-header">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h3 onclick="goHome()" style="margin-left: 15px; cursor: pointer;">BRO SNACK</h3>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2 onclick="goHome()" style="cursor: pointer; user-select: none; display: flex; align-items: center; gap: 12px; margin: 0; padding: 24px 24px 10px 24px;">
+            <img src="bro.png" alt="Logo" style="width: 35px; height: 35px; object-fit: contain;">
+            <span>BRO SNACK</span>
+        </h2>
+    </div>
+    
+    <div class="user-info-box">
+        <p>User:</p>
+        <div class="username" id="userNameDisplay">Memuat...</div>
+    </div>
+
+    <div class="sidebar-menu">
+        <div class="menu">
+            <div class="menu-label">Main Menu</div>
+            <button onclick="changeMenu(this, 'penjualan')">🛒 Penjualan (Kasir)</button>
+            <button onclick="changeMenu(this, 'pembelian')">📥 Stok Masuk</button>
+            
+            <div class="menu-label" style="margin-top:24px">Inventory</div>
+            <button onclick="changeMenu(this, 'barang')">📦 Daftar Produk</button>
+            
+            <div class="admin-only">
+                <div class="menu-label" style="margin-top:24px">Reports</div>
+                <button onclick="changeMenu(this, 'profit')">💰 Laporan Laba</button>
+                <button onclick="changeMenu(this, 'terlaris')">🔥 Produk Terlaris</button>
+                <button id="menu-admin-users" onclick="changeMenu(this, 'users')" style="display:none;">👥 Daftar Akun</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <button id="logoutBtn" onclick="logout()">🚪 Keluar Aplikasi</button>
+        <div class="version-text">v1.0.2-Stable</div>
+    </div>
+</div>
+
+<div class="content" id="mainContent">
+    <div class="content-header">
+        <h2 id="pageTitle">Selamat Datang</h2> 
+        <p id="pageSub">Silakan pilih menu untuk memulai operasional hari ini.</p>
+    </div>
+    <div id="contentArea"></div>
+</div>
+
+<div id="modalForm" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; backdrop-filter: blur(4px);">
+    <div class="card" style="width:95%; max-width:600px; position:relative; animation: slideDown 0.3s ease; border: none; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);">
+        <span onclick="closeModal()" style="position:absolute; right:20px; top:15px; cursor:pointer; font-size:28px; color: #94a3b8;">&times;</span>
+        <h3 id="modalTitle" style="margin-bottom:20px; color: #1e293b; display: flex; align-items: center; gap: 10px;">Form</h3>
+        <hr style="margin-bottom: 20px; border: 0; border-top: 1px solid #e2e8f0;">
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<style>
+    /* Efek animasi muncul dari atas */
+    @keyframes slideDown {
+        from { transform: translateY(-30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+</div>
+
+<script>
+// 1. SATPAM LOGIN & ROLE (Paling Atas)
+const isLoggedIn = localStorage.getItem("isLoggedIn");
+const userRole = localStorage.getItem("userRole"); // Ambil role (admin/kasir)
+
+if (isLoggedIn !== "true") {
+    window.location.replace("login.html");
+}
+
+// 2. FUNGSI PENYARING MENU
+function terapkanHakAkses() {
+    // Jika yang login adalah kasir
+    if (userRole === "kasir") {
+        // Cari semua elemen (button/div) yang punya class 'admin-only'
+        const elemenAdmin = document.querySelectorAll('.admin-only');
+        
+        // Sembunyikan semuanya
+        elemenAdmin.forEach(item => {
+            item.style.display = 'none';
+        });
+        
+        console.log("Sistem: Anda masuk sebagai KASIR. Menu laporan dikunci.");
+    } else {
+        console.log("Sistem: Anda masuk sebagai ADMIN. Semua menu dibuka.");
+    }
+}
+
+// 3. JALANKAN SAAT HALAMAN DIBUKA
+window.addEventListener('load', () => {
+    terapkanHakAkses();
+    // Panggil fungsi awal dashboard kamu (misal goHome atau renderContent)
+    if (typeof goHome === 'function') goHome();
+});
+
+function updateWelcomeMessage() {
+    // 1. Ambil data dari penyimpanan browser
+    const username = localStorage.getItem("username") || "User";
+    const role = localStorage.getItem("userRole") || "kasir"; // Default kecil untuk pengecekan
+    
+    // 2. Update nama di bawah logo sidebar (userNameDisplay)
+    const sideDisplay = document.getElementById("userNameDisplay");
+    if (sideDisplay) sideDisplay.innerText = username;
+
+    // 3. Update nama di info user lainnya jika ada (display-user)
+    const displayUser = document.getElementById('display-user');
+    if (displayUser) displayUser.innerText = username;
+
+    // 4. Update judul utama di halaman konten (Selamat Datang...)
+    const pageTitle = document.getElementById("pageTitle");
+    if (pageTitle) {
+        pageTitle.innerText = `Selamat Datang, ${username} (${role.toUpperCase()})`;
+    }
+
+    // --- TAMBAHAN UNTUK MENU ADMIN ---
+    // 5. Kontrol akses tombol Daftar Akun
+    const btnAdminUsers = document.getElementById("menu-admin-users");
+    if (btnAdminUsers) {
+        if (role.toLowerCase() === 'admin') {
+            btnAdminUsers.style.display = 'block'; // Munculkan jika admin
+        } else {
+            btnAdminUsers.style.display = 'none';  // Sembunyikan jika kasir
+        }
+    }
+}
+// Pastikan fungsi ini dipanggil saat window load
+window.addEventListener('load', () => {
+    // Jalankan proteksi menu
+    if (typeof terapkanHakAkses === 'function') terapkanHakAkses(); 
+    
+    // Jalankan update nama user
+    if (typeof updateWelcomeMessage === 'function') updateWelcomeMessage(); 
+    
+    // Jalankan tampilan awal dashboard
+    if (typeof goHome === 'function') goHome(); 
+});
+
+// 2. DATA KONTEN (Disatukan semua di sini)
+const contents = {
+    dashboard: `
+        <div class="card">
+            <h2>🏠 Dashboard Bro Snack</h2>
+            <p>Selamat datang di sistem manajemen toko. Silakan pilih menu di samping untuk mengelola transaksi.</p>
+        </div>
+    `,
+    penjualan: `
+        <style>
+            .search-container { display:flex; gap:10px; flex-wrap:wrap; }
+            .input-search { padding: 8px 15px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; transition: 0.3s; font-size: 14px; width: 200px; }
+            .input-search:focus { border-color: #4361ee; box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); }
+            .input-filter { padding: 7px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; }
+        </style>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>🛒 Kasir & Transaksi</h3>
+            <button class="btn-main" onclick="openModalPenjualan()" style="width:auto; padding:10px 20px; background:#10b981">+ Transaksi Baru</button>
+        </div>
+        <div class="card" style="margin-bottom:20px">
+            <h3 style="margin-bottom:15px">📦 Keranjang Belanja</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Kode</th><th>Nama</th><th>Harga</th><th>Qty</th><th>Total</th><th>Aksi</th></tr></thead>
+                    <tbody id="tbody-keranjang"></tbody>
+                </table>
+            </div>
+            <button class="btn-main" style="margin-top:20px; background:#4361ee" onclick="simpanInvoice()">Proses & Simpan Transaksi</button>
+        </div>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px">
+                <h3>History Penjualan</h3>
+                <div class="search-container">
+                    <input type="date" id="filter-tgl-sales" class="input-filter" onchange="cariHistorySales()">
+                    <input type="text" id="cari-sales" placeholder="Cari No. Invoice..." class="input-search" onkeyup="cariHistorySales()">
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>No Invoice</th><th>Tanggal</th><th>Total</th><th>Opsi</th></tr></thead>
+                    <tbody id="tbody-invoice"></tbody>
+                </table>
+            </div>
+        </div>
+    `,
+    pembelian: `
+        <style>
+            .input-search { padding: 8px 15px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; transition: 0.3s; font-size: 14px; width: 250px; }
+            .input-search:focus { border-color: #4361ee; box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); }
+        </style>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Restock Barang (Pembelian)</h3>
+            <button class="btn-main" onclick="openModalPembelian()" style="width:auto; padding:10px 20px;">+ Input Stok Masuk</button>
+        </div>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+                <h3>Riwayat Stok Masuk</h3>
+                <input type="text" id="cari-purchase" placeholder="Cari Nama Barang..." class="input-search" onkeyup="cariRiwayatStok()">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Tgl</th><th>Nama</th><th>Qty</th><th>Beli</th><th>Total</th><th>Aksi</th></tr></thead>
+                    <tbody id="tbody-purchase"></tbody>
+                </table>
+            </div>
+        </div>
+    `,
+    barang: `
+        <style>
+            .input-search { padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; transition: 0.3s; font-size: 14px; width: 100%; box-sizing: border-box; }
+            .input-search:focus { border-color: #4361ee; box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); }
+        </style>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Master Data Produk</h3>
+            <button class="btn-main" onclick="openModalBarang()" style="width:auto; padding:10px 20px;">+ Tambah Produk</button>
+        </div>
+        <div class="card">
+            <div style="margin-bottom:15px">
+                <input type="text" id="cari-barang" placeholder="Cari Kode atau Nama Barang..." class="input-search" onkeyup="cariMasterBarang()">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Kode</th><th>Nama</th><th>Modal</th><th>Jual</th><th>Stok</th><th>Aksi</th></tr></thead>
+                    <tbody id="tabel-item"></tbody>
+                </table>
+            </div>
+        </div>
+    `,
+    profit: `
+        <div class="card">
+            <h3 style="margin-bottom:15px">Filter Laporan</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:flex-end">
+                <div class="form-group"><label>Dari</label><input type="date" id="filter_start"></div>
+                <div class="form-group"><label>Sampai</label><input type="date" id="filter_end"></div>
+                <button onclick="loadProfitReport()" class="btn-icon btn-detail" style="height:40px; padding:0 20px">Filter</button>
+            </div>
+        </div>
+        <div class="profit-card" style="background: linear-gradient(135deg, #4361ee, #4cc9f0); color:white; padding:20px; border-radius:15px; margin: 20px 0; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <p style="opacity:0.9; font-size:14px">Total Keuntungan Bersih</p>
+                <h1 id="total-profit-display" style="font-size:32px; font-weight:800">Rp 0</h1>
+            </div>
+            <div style="font-size:40px">💰</div>
+        </div>
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Tgl</th><th>Nama Barang</th><th>Qty</th><th>Profit</th></tr></thead>
+                    <tbody id="tbody-profit"></tbody>
+                </table>
+            </div>
+        </div>
+    `,
+    terlaris: `
+        <div class="card">
+            <h3>Peringkat Produk Terlaris</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Peringkat</th><th>Nama Produk</th><th>Jumlah Terjual</th></tr></thead>
+                    <tbody id="tbody-terlaris"></tbody>
+                </table>
+            </div>
+        </div>
+    `,
+
+    // Di dalam contents.users, ubah bagian headernya:
+users: `
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>👥 Manajemen Akun Kasir</h3>
+            <button class="btn-main" style="width:auto; padding:8px 15px;" onclick="tambahKasir()">+ Tambah Akun</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Jabatan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-users">
+                    <tr><td colspan="3" style="text-align:center">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+`,
+};
+
+
+// 3. FUNGSI INTI (RENDER & NAVIGATION)
+function renderContent(menu) {
+    const container = document.getElementById("contentArea");
+    if (!container) return;
+
+    if (contents[menu]) {
+        container.innerHTML = contents[menu];
+        window.scrollTo(0,0);
+        
+        // Auto-load data saat menu dibuka
+        if (menu === 'penjualan') loadInvoiceHistory();
+        if (menu === 'barang') loadItems();
+        if (menu === 'pembelian') loadPurchaseHistory();
+        if (menu === 'profit') loadProfitReport();
+        if (menu === 'terlaris') loadTerlaris();
+        if (menu === 'users') loadUsersList();
+    } else {
+        console.error("Konten menu tidak ditemukan:", menu);
+    }
+}
+
+function changeMenu(btn, menu) {
+    // 1. Render konten baru
+    renderContent(menu);
+    
+    // 2. HAPUS class 'active' dari SEMUA tombol menu lebih dulu
+    const semuaTombol = document.querySelectorAll('.menu button');
+    semuaTombol.forEach(tombol => {
+        tombol.classList.remove('active');
+    });
+    
+    // 3. TAMBAHKAN class 'active' hanya ke tombol yang baru diklik
+    if (btn) {
+        btn.classList.add('active');
+    }
+    
+    // 4. Tutup sidebar jika di HP
+    closeSidebarOnMobile();
+}
+
+function goHome() {
+    changeMenu(document.querySelector('.nav-item'), 'dashboard');
+}
+
+// Jalankan dashboard otomatis saat pertama kali buka
+window.onload = () => {
+    goHome();
+};
+
+// 4. SIDEBAR & MODAL LOGIC
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    sidebar.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : 'auto';
+}
+
+function closeSidebarOnMobile() {
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth <= 768 && sidebar) {
+        sidebar.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function openModal(title, contentHtml) {
+    document.getElementById('modalTitle').innerHTML = title;
+    document.getElementById('modalBody').innerHTML = contentHtml;
+    document.getElementById('modalForm').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('modalForm').style.display = 'none';
+}
+
+function logout() {
+    localStorage.clear();
+    location.href = '/';
+}
+
+// 5. PENJUALAN (KASIR) LOGIC
+let keranjang = [];
+
+async function openModalPenjualan() {
+    const formHtml = `
+        <div class="form-box">
+            <div class="form-group"><label>Tanggal</label><input type="date" id="tanggal"></div>
+            <div class="form-group"><label>Cari Produk</label><select id="kode_item" onchange="pilihItem()"></select></div>
+            <div class="form-group"><label>Nama Barang</label><input type="text" id="nama_item" disabled style="background:#f1f5f9"></div>
+            <div class="form-group"><label>Harga (Rp)</label><input type="number" id="harga" disabled style="background:#f1f5f9"></div>
+            <div class="form-group"><label>Jumlah (Qty)</label><input type="number" id="qty" placeholder="0"></div>
+            <button class="btn-main" onclick="tambahKeKeranjangDariModal()">+ Masukkan Keranjang</button>
+        </div>`;
+    openModal("🛒 Tambah Item Belanja", formHtml);
+    
+    const res = await fetch('/api/item');
+    const items = await res.json();
+    const select = document.getElementById('kode_item');
+    select.innerHTML = `<option value="">-- Pilih Produk --</option>`;
+    items.forEach(i => {
+        select.innerHTML += `<option value="${i.kode}" data-nama="${i.nama}" data-harga="${i.harga_jual}">${i.nama} (Stok: ${i.stok})</option>`;
+    });
+    document.getElementById('tanggal').valueAsDate = new Date();
+}
+
+function pilihItem(){
+    const opt = document.getElementById('kode_item').selectedOptions[0];
+    if(!opt || opt.value === "") return;
+    
+    document.getElementById('nama_item').value = opt.dataset.nama;
+    document.getElementById('harga').value = opt.dataset.harga;
+    
+    // Kita simpan info stok maksimal di atribut 'max' pada input qty
+    const stokTersedia = opt.text.split('Stok: ')[1].replace(')', ''); 
+    document.getElementById('qty').setAttribute('max', stokTersedia);
+}
+function tambahKeKeranjangDariModal() {
+    const kode = document.getElementById('kode_item').value;
+    const qty = parseInt(document.getElementById('qty').value);
+    const nama = document.getElementById('nama_item').value;
+    const harga = parseInt(document.getElementById('harga').value);
+    const tanggal = document.getElementById('tanggal').value;
+    
+    // AMBIL INFO STOK DARI ATRIBUT MAX
+    const maxStok = parseInt(document.getElementById('qty').getAttribute('max'));
+
+    if(!kode || !qty || qty <= 0) return alert('Lengkapi data!');
+    
+    // VALIDASI: Cek apakah qty melebihi stok
+    if(qty > maxStok) {
+        return alert(`Stok tidak cukup! Sisa stok untuk ${nama} hanya ${maxStok}`);
+    }
+
+    keranjang.push({tanggal, kode, nama, harga, qty});
+    renderKeranjang();
+    closeModal();
+}
+function renderKeranjang(){
+    const tbody = document.getElementById('tbody-keranjang');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    keranjang.forEach((x, i) => {
+        tbody.innerHTML += `
+            <tr>
+                <td><b>${x.kode}</b></td>
+                <td>${x.nama}</td>
+                <td>${x.harga.toLocaleString()}</td>
+                <td>${x.qty}</td>
+                <td style="font-weight:700">Rp ${(x.qty * x.harga).toLocaleString()}</td>
+                <td><button class="btn-icon btn-hapus" onclick="hapusKeranjang(${i})">Batal</button></td>
+            </tr>`;
+    });
+}
+
+function hapusKeranjang(i){ keranjang.splice(i, 1); renderKeranjang(); }
+
+async function simpanInvoice(){
+    if(!keranjang.length) return alert('Keranjang kosong!');
+    const payload = {
+        tanggal: keranjang[0].tanggal,
+        items: keranjang.map(x => ({
+            kode_item: x.kode,
+            nama_item: x.nama,
+            qty: x.qty,
+            harga: x.harga
+        }))
+    };
+    const res = await fetch('/api/invoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    if(res.ok) {
+        alert('Transaksi Berhasil!');
+        keranjang = [];
+        renderContent('penjualan');
+    }
+}
+
+async function loadInvoiceHistory() {
+    const res = await fetch('/api/invoice');
+    const data = await res.json();
+    const tbody = document.getElementById('tbody-invoice');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    data.reverse().slice(0, 10).forEach(inv => {
+        tbody.innerHTML += `
+            <tr>
+                <td><span class="badge" style="background:#f1f5f9; color:#334155">${inv.nomor}</span></td>
+                <td>${inv.tanggal}</td>
+                <td style="font-weight:700">Rp ${Number(inv.total || 0).toLocaleString()}</td>
+                <td>
+                    <button class="btn-main" style="width:auto; padding:5px 12px; background:#6366f1; font-size:12px" onclick="printInvoice('${inv.nomor}')">Cetak</button>
+                    <button class="btn-main" style="width:auto; padding:5px 12px; background:#ef4444; font-size:12px" onclick="hapusInvoice('${inv.nomor}')">Hapus</button>
+                </td>
+            </tr>`;
+    });
+}
+
+async function printInvoice(id) {
+    const r = await fetch('/api/invoice/' + id);
+    const d = await r.json();
+    let iframe = document.getElementById('print-iframe') || document.createElement('iframe');
+    iframe.id = 'print-iframe'; iframe.style.position = 'absolute'; iframe.style.top = '-9999px';
+    document.body.appendChild(iframe);
+
+    const itemsHTML = d.items.map(i => `
+        <div style="margin-top: 5px;">
+            <div style="font-weight: bold;">${i.nama_item}</div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>${i.qty} x ${i.harga.toLocaleString()}</span><span>${i.subtotal.toLocaleString()}</span>
+            </div>
+        </div>`).join('');
+
+    const html = `<html><body style="font-family:monospace; width:58mm; padding:5px;">
+        <div style="text-align:center; font-weight:bold;">BRO SNACK</div>
+        <hr>
+        <div>No: ${d.nomor}</div><div>Tgl: ${d.tanggal}</div>
+        <hr>${itemsHTML}<hr>
+        <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>TOTAL</span><span>Rp ${d.total.toLocaleString()}</span></div>
+        <div style="text-align:center; margin-top:15px;">Terima Kasih</div>
+    </body></html>`;
+
+    const doc = iframe.contentWindow.document;
+    doc.open(); doc.write(html); doc.close();
+    setTimeout(() => { iframe.contentWindow.focus(); iframe.contentWindow.print(); }, 500);
+}
+
+async function hapusInvoice(nomor) {
+    // 1. Konfirmasi ke user
+    if (!confirm(`Hapus invoice ${nomor}? Stok barang akan otomatis bertambah kembali.`)) return;
+
+    try {
+        // 2. Kirim request DELETE ke server sesuai route yang kita buat tadi
+        const res = await fetch(`/api/invoice/${nomor}`, { 
+            method: 'DELETE' 
+        });
+        
+        const data = await res.json();
+
+        if (res.ok) {
+            alert(data.message); // Muncul pesan "Berhasil dihapus dan stok kembali"
+            
+            // 3. Supaya tampilan langsung update tanpa refresh, 
+            // kita hapus baris tabelnya secara manual dari layar
+            const rows = document.querySelectorAll("#tbody-invoice tr");
+            rows.forEach(row => {
+                if (row.innerText.includes(nomor)) {
+                    row.remove();
+                }
+            });
+        } else {
+            alert("Gagal menghapus: " + data.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan koneksi ke server.");
+    }
+}
+
+// 6. MASTER BARANG & PEMBELIAN LOGIC
+async function loadItems() {
+    const res = await fetch('/api/item');
+    const data = await res.json();
+    const tbody = document.getElementById('tabel-item');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    data.forEach(item => {
+        tbody.innerHTML += `<tr>
+            <td>${item.kode}</td><td>${item.nama}</td>
+            <td>Rp ${Number(item.harga_beli).toLocaleString()}</td>
+            <td>Rp ${Number(item.harga_jual).toLocaleString()}</td>
+            <td>${item.stok}</td>
+            <td>
+                <button class="btn-main" style="width:auto; padding:5px 10px; background:#f59e0b" onclick="editItem('${item.kode}','${item.nama}',${item.harga_beli},${item.harga_jual},${item.stok})">Edit</button>
+                <button class="btn-main" style="width:auto; padding:5px 10px; background:#ef4444" onclick="hapusItem('${item.kode}', '${item.nama}')">Hapus</button>
+            </td>
+        </tr>`;
+    });
+}
+
+function openModalBarang(isEdit = false) {
+    const formHtml = `
+        <div class="form-box">
+            <div class="form-group"><label>Kode Unik</label><input type="text" id="kode"></div>
+            <div class="form-group"><label>Nama Produk</label><input type="text" id="nama"></div>
+            <div class="form-group"><label>Harga Beli</label><input type="number" id="harga_beli"></div>
+            <div class="form-group"><label>Harga Jual</label><input type="number" id="harga_jual"></div>
+            <div class="form-group"><label>Stok Awal</label><input type="number" id="stok"></div>
+            <button class="btn-main" id="btn-simpan" mode="${isEdit ? 'edit' : 'add'}" onclick="simpanItem()">Simpan Data</button>
+        </div>`;
+    openModal(isEdit ? "📝 Edit Produk" : "📦 Tambah Produk", formHtml);
+}
+
+async function simpanItem() {
+    const mode = document.getElementById('btn-simpan').getAttribute('mode');
+    const body = {
+        kode: document.getElementById('kode').value.trim(),
+        nama: document.getElementById('nama').value.trim(),
+        harga_beli: document.getElementById('harga_beli').value,
+        harga_jual: document.getElementById('harga_jual').value,
+        stok: document.getElementById('stok').value
+    };
+    const method = mode === 'edit' ? 'PUT' : 'POST';
+    const url = mode === 'edit' ? `/api/item/${body.kode}` : '/api/item';
+
+    const res = await fetch(url, {
+        method, headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+    if (res.ok) { closeModal(); renderContent('barang'); }
+}
+
+function editItem(kode, nama, beli, jual, stok){
+    openModalBarang(true); 
+    setTimeout(() => {
+        document.getElementById("kode").value = kode;
+        document.getElementById("nama").value = nama;
+        document.getElementById("harga_beli").value = beli;
+        document.getElementById("harga_jual").value = jual;
+        document.getElementById("stok").value = stok;
+        document.getElementById("kode").disabled = true;
+    }, 100);
+}
+
+async function hapusItem(id, nama) {
+    if (!confirm(`Hapus ${nama}?`)) return;
+    await fetch(`/api/item/${id}`, { method: 'DELETE' });
+    renderContent('barang');
+}
+
+async function openModalPembelian() {
+    const formHtml = `
+        <div class="form-box">
+            <div class="form-group"><label>Tanggal</label><input type="date" id="tgl_beli"></div>
+            <div class="form-group"><label>Pilih Barang</label><select id="pilih_item_beli" onchange="pilihItemBeli()"></select></div>
+            <div class="form-group"><label>Nama</label><input type="text" id="nama_beli" disabled style="background:#f1f5f9"></div>
+            <div class="form-group"><label>Harga Beli</label><input type="number" id="harga_beli_input"></div>
+            <div class="form-group"><label>Qty Masuk</label><input type="number" id="qty_beli"></div>
+            <button class="btn-main" onclick="simpanPembelian()">Update Stok</button>
+        </div>`;
+    openModal("📥 Input Stok Masuk", formHtml);
+
+    const res = await fetch('/api/item');
+    const items = await res.json();
+    const select = document.getElementById('pilih_item_beli');
+    select.innerHTML = '<option value="">-- Pilih Barang --</option>';
+    items.forEach(i => {
+        select.innerHTML += `<option value="${i.kode}" data-nama="${i.nama}" data-harga="${i.harga_beli}">${i.nama}</option>`;
+    });
+    document.getElementById('tgl_beli').valueAsDate = new Date();
+}
+
+function pilihItemBeli() {
+    const opt = document.getElementById('pilih_item_beli').selectedOptions[0];
+    if(!opt || opt.value === "") return;
+    document.getElementById('nama_beli').value = opt.dataset.nama;
+    document.getElementById('harga_beli_input').value = opt.dataset.harga;
+}
+
+async function simpanPembelian() {
+    const body = {
+        tanggal: document.getElementById('tgl_beli').value,
+        kode_item: document.getElementById('pilih_item_beli').value,
+        nama_item: document.getElementById('nama_beli').value,
+        qty: parseInt(document.getElementById('qty_beli').value),
+        harga_beli: parseInt(document.getElementById('harga_beli_input').value)
+    };
+    if(!body.kode_item || !body.qty) return alert("Lengkapi data!");
+    const res = await fetch('/api/purchase', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+    if (res.ok) { closeModal(); renderContent('pembelian'); }
+}
+
+async function loadPurchaseHistory() {
+    const res = await fetch('/api/purchase');
+    const data = await res.json();
+    const tbody = document.getElementById('tbody-purchase');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+   data.reverse().forEach(p => {
+    tbody.innerHTML += `
+        <tr>
+            <td>${p.tanggal}</td>
+            <td>${p.kode_item}</td>
+            <td>${p.nama_item}</td>
+            <td>${p.qty}</td>
+            <td>Rp ${Number(p.harga_beli).toLocaleString()}</td>
+            <td>
+                <button class="btn-main" style="width:auto; padding:5px 12px; background:#ef4444; font-size:12px" 
+                        onclick="hapusPurchase('${p.id}')">Hapus</button>
+            </td>
+        </tr>`;
+});
+}
+
+async function hapusPurchase(id) {
+    if (!confirm("Apakah Anda yakin ingin menghapus riwayat stok masuk ini?")) return;
+
+    try {
+        const res = await fetch(`/api/purchase/${id}`, {
+            method: 'DELETE'
+        });
+        const hasil = await res.json();
+
+        if (res.ok) {
+            alert("Riwayat stok berhasil dihapus");
+            loadPurchaseHistory(); // Refresh tabel biar data hilang
+        } else {
+            alert("Gagal menghapus: " + (hasil.message || "Terjadi kesalahan"));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Gagal koneksi ke server");
+    }
+}
+
+// 7. REPORTING (PROFIT & TERLARIS)
+async function loadProfitReport() {
+    const start = document.getElementById('filter_start')?.value || '';
+    const end = document.getElementById('filter_end')?.value || '';
+    const res = await fetch(`/api/sales/profit-report?start=${start}&end=${end}`);
+    const data = await res.json();
+    const tbody = document.getElementById('tbody-profit');
+    const displayTotal = document.getElementById('total-profit-display');
+    if (!tbody) return;
+    let totalProfit = 0;
+    tbody.innerHTML = '';
+    data.forEach(row => {
+        totalProfit += row.profit;
+        tbody.innerHTML += `<tr><td>${row.tanggal}</td><td>${row.nama_item}</td><td>${row.qty}</td><td style="color:#16a34a; font-weight:700">+ Rp ${row.profit.toLocaleString()}</td></tr>`;
+    });
+    if(displayTotal) displayTotal.innerText = `Rp ${totalProfit.toLocaleString()}`;
+}
+
+async function loadTerlaris() {
+    const res = await fetch('/api/sales/best-seller');
+    const data = await res.json();
+    const tbody = document.getElementById('tbody-terlaris');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    data.forEach((i, idx) => {
+        tbody.innerHTML += `<tr><td>${idx+1}</td><td>${i.nama_item}</td><td style="font-weight:700">${i.total_qty} Terjual</td></tr>`;
+    });
+}
+
+// 8. SEARCH FUNCTIONS
+function cariMasterBarang() {
+    const input = document.getElementById("cari-barang")?.value.toLowerCase() || "";
+    document.querySelectorAll("#tabel-item tr").forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+function cariHistorySales() {
+    const search = document.getElementById("cari-sales")?.value.toLowerCase() || "";
+    const tglFilter = document.getElementById("filter-tgl-sales")?.value || "";
+    document.querySelectorAll("#tbody-invoice tr").forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const tglRow = row.cells[1]?.innerText || ""; 
+        const matchSearch = text.includes(search);
+        const matchDate = tglFilter ? tglRow.includes(tglFilter) : true;
+        row.style.display = (matchSearch && matchDate) ? "" : "none";
+    });
+}
+
+function cariRiwayatStok() {
+    const input = document.getElementById("cari-purchase")?.value.toLowerCase() || "";
+    document.querySelectorAll("#tbody-purchase tr").forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+async function loadUsersList() {
+    try {
+        const res = await fetch('/api/auth/users');
+        const data = await res.json();
+        const tbody = document.getElementById('tbody-users');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        data.forEach(u => {
+            const isSelf = u.username === localStorage.getItem("username");
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${u.username}</strong></td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#475569">${u.role.toUpperCase()}</span></td>
+                    <td>
+                        ${isSelf ? '<em style="color:#94a3b8">Aktif</em>' : 
+                        `<button class="btn-main" 
+    style="width:auto; padding:5px 12px; background:#ef4444; font-size:12px" onclick="hapusAkun('${u.id}', '${u.username}')">Hapus</button>`}
+                    </td>
+                </tr>`;
+        });
+    } catch (err) {
+        console.error("Gagal muat user:", err);
+    }
+} // <--- PASTIKAN ADA KURUNG TUTUP DI SINI (Menutup loadUsersList)
+
+// SEKARANG FUNGSI INI BERDIRI SENDIRI DI LUAR
+async function hapusAkun(id, nama) {
+    if (!confirm(`Apakah Anda yakin ingin menghapus akun "${nama}"?`)) return;
+
+    try {
+        const res = await fetch(`/api/auth/users/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok) {
+            alert(`Akun ${nama} berhasil dihapus.`);
+            loadUsersList(); 
+        } else {
+            const errData = await res.json();
+            alert("Gagal menghapus: " + (errData.message || "Terjadi kesalahan server"));
+        }
+    } catch (err) {
+        console.error("Error hapus:", err);
+        alert("Gagal koneksi ke server.");
+    }
+}
+
+    async function tambahKasir() {
+    const username = prompt("Masukkan Username baru:");
+    if (!username) return;
+    
+    const password = prompt("Masukkan Password:");
+    if (!password) return;
+
+    try {
+        const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert("Berhasil menambah kasir baru!");
+            loadUsersList(); // Refresh tabel
+        } else {
+            alert("Gagal: " + data.message);
+        }
+    } catch (err) {
+        console.error("Error:", err);
+        alert("Gagal terhubung ke server");
+    }
+}
+
+
+
+
+</script>
+</body>
+</html>

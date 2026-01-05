@@ -1,0 +1,52 @@
+<h2>Histori Invoice</h2>
+<div id="history"></div>
+
+<script>
+async function loadHistory() {
+  try {
+    const res = await fetch("/api/invoice");
+    const data = await res.json();
+
+    const div = document.getElementById("history");
+    div.innerHTML = "";
+
+    data.forEach(inv => {
+      let html = `
+        <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;">
+          <h3>Invoice: ${inv.nomor}</h3>
+          <p>Tanggal: ${inv.tanggal}</p>
+          <p>Total: Rp ${inv.total.toLocaleString()}</p>
+
+          <table border="1" cellpadding="4" cellspacing="0">
+            <tr>
+              <th>Kode</th>
+              <th>Nama Item</th>
+              <th>Qty</th>
+              <th>Harga</th>
+              <th>Subtotal</th>
+            </tr>
+      `;
+
+      inv.items.forEach(i => {
+        html += `
+          <tr>
+            <td>${i.kode_item}</td>
+            <td>${i.nama_item}</td>
+            <td>${i.qty}</td>
+            <td>${i.harga}</td>
+            <td>${i.subtotal}</td>
+          </tr>
+        `;
+      });
+
+      html += `</table></div>`;
+      div.innerHTML += html;
+    });
+
+  } catch (err) {
+    document.getElementById("history").innerText = "Gagal load data invoice";
+  }
+}
+
+loadHistory();
+</script>

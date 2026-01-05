@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Form - Bro Snack</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="box">
+    <form onsubmit="login(event)">
+      <div class="error" id="error-msg" style="display:none;"></div>
+
+      <div class="title">
+        <h1>Login App Bro</h1>
+      </div>
+
+      <div class="input-box">
+        <label class="label-color" for="username">Username</label>
+        <input id="username" type="text" placeholder="Username" required />
+
+        <label class="label-color" for="password">Password</label>
+        <input id="password" type="password" placeholder="Password" required />
+
+        <input type="submit" value="Login" />
+        <p style="text-align: center; margin-top: 10px;">
+   <a href="register.html" style="color: white; text-decoration: none; font-size: 12px;">Kasir baru? Daftar di sini</a>
+</p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function login(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorBox = document.getElementById('error-msg');
+
+      if (!username || !password) {
+        errorBox.style.display = 'block';
+        errorBox.innerText = 'Username dan password harus diisi!';
+        return;
+      }
+
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Cek jika login berhasil
+        if (data.message === 'Login berhasil' || data.success === true) {
+          
+          // SIMPAN DATA KE BROWSER
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', username);
+          
+          // SIMPAN ROLE (Diambil dari response server)
+          // Pastikan server mengirimkan property 'role'
+          localStorage.setItem('userRole', data.role || 'kasir');
+
+          // Beri jeda 100ms agar browser selesai mencatat data
+          setTimeout(() => {
+             window.location.replace('dashboard.html'); 
+          }, 100);
+
+        } else {
+          errorBox.style.display = 'block';
+          errorBox.innerText = data.message || 'Login Gagal!';
+          errorBox.classList.remove('shake');
+          void errorBox.offsetWidth;
+          errorBox.classList.add('shake');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        errorBox.style.display = 'block';
+        errorBox.innerText = 'Server error atau koneksi terputus!';
+      });
+    }
+  </script>
+</body>
+</html>
