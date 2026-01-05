@@ -8,6 +8,10 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "server.js"
+    },
+    {
       "src": "/css/(.*)",
       "dest": "/public/css/$1"
     },
@@ -17,7 +21,12 @@
     },
     {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/public/$1",
+      "check": true
+    },
+    {
+      "src": "/",
+      "dest": "/public/login.html"
     }
   ]
 }
