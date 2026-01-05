@@ -12,21 +12,16 @@
       "dest": "server.js"
     },
     {
-      "src": "/css/(.*)",
-      "dest": "/public/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/public/js/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "/public/$1",
       "check": true
     },
     {
-      "src": "/",
-      "dest": "/public/login.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
     }
   ]
 }
